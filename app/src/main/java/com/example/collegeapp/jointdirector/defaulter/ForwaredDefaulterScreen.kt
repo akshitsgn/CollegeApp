@@ -80,6 +80,7 @@ fun SearchBarJD(
 
 @Composable
 fun StudentListWithSearchJD(
+    navController: NavController
 ) {
     var isDialogOpen by remember {
         mutableStateOf(false)

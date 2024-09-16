@@ -1,4 +1,4 @@
-package com.example.collegeapp.warden.login
+package com.example.collegeapp.common.login
 
 import androidx.lifecycle.ViewModel
 import com.google.firebase.auth.FirebaseAuth

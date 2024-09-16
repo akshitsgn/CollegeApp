@@ -1,4 +1,4 @@
-package com.example.collegeapp.warden.login
+package com.example.collegeapp.common.login
 
 
 import android.widget.Toast
@@ -57,13 +57,25 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.example.collegeapp.R
+import com.example.collegeapp.common.signup.SignUpViewModel
+import com.google.firebase.auth.FirebaseAuth
 
 
 @Composable
 fun LoginScreen(navController: NavController) {
-
+  val viewModel1: SignUpViewModel= hiltViewModel()
     val viewModel: SignInViewModel = hiltViewModel()
     val uiState = viewModel.state.collectAsState()
+
+    val userRole by viewModel1.userRole.collectAsState() // Observe the user role state
+    val currentUser = FirebaseAuth.getInstance().currentUser
+
+    LaunchedEffect(currentUser?.uid) {
+        currentUser?.uid?.let { uid ->
+            viewModel1.fetchUserRole(uid) // Fetch user role for the logged-in user
+        }
+    }
+
 
     var username by remember {
         mutableStateOf("")
@@ -108,7 +120,12 @@ fun LoginScreen(navController: NavController) {
     LaunchedEffect(key1 = uiState.value) {
         when(uiState.value){
             is SignInState.Success ->{
-                navController.navigate("dashboard")
+                if(userRole=="Warden") {
+                    navController.navigate("dashboard")
+                }
+                else{
+                    navController.navigate("dashboardJD")
+                }
             }
             is SignInState.Error ->{
                 Toast.makeText(context,"Sign In Failed",Toast.LENGTH_LONG).show()
@@ -228,22 +245,22 @@ fun LoginScreen(navController: NavController) {
                     CircularProgressIndicator(modifier = Modifier.align(Alignment.CenterHorizontally))
                 }
                 else{
-                Button(
-                    onClick = {viewModel.signIn(username, password)},
-                    colors = ButtonDefaults.buttonColors(
-                        containerColor = Color(0xFF029135), // Background color of the button
-                        contentColor = Color.White // Text color of the button
-                    ),
-                    enabled = username.isNotEmpty() && password.isNotEmpty() && (uiState.value == SignInState.Nothing || uiState.value == SignInState.Error),
-                    shape = RoundedCornerShape(12.dp),
-                    modifier = Modifier
-                        .width(140.dp)
-                        .align(Alignment.CenterHorizontally) // Center the button horizontally
-                    // Optional padding above the button
-                ) {
-                    Text("Log In")
+                    Button(
+                        onClick = {viewModel.signIn(username, password)},
+                        colors = ButtonDefaults.buttonColors(
+                            containerColor = Color(0xFF029135), // Background color of the button
+                            contentColor = Color.White // Text color of the button
+                        ),
+                        enabled = username.isNotEmpty() && password.isNotEmpty() && (uiState.value == SignInState.Nothing || uiState.value == SignInState.Error),
+                        shape = RoundedCornerShape(12.dp),
+                        modifier = Modifier
+                            .width(140.dp)
+                            .align(Alignment.CenterHorizontally) // Center the button horizontally
+                        // Optional padding above the button
+                    ) {
+                        Text("Log In")
+                    }
                 }
-            }
                 Text("Forgot Password?",
                     style = TextStyle(
                         fontSize = 14.sp

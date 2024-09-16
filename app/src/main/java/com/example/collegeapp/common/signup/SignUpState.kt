@@ -1,4 +1,4 @@
-package com.example.collegeapp.warden.signup
+package com.example.collegeapp.common.signup
 
 sealed class SignUpState {
     object Nothing: SignUpState()

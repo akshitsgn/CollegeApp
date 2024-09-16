@@ -30,7 +30,7 @@ class MainActivity : ComponentActivity() {
                NavScreen()
                 //CreateAccountScreen( navController)
               // StudentListWithSearch()
-                //AddStudentScreen()
+               // AddStudentScreen()
                 //DashboardScreen(navController = navController)
             }
         }

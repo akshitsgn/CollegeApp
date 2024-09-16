@@ -1,4 +1,4 @@
-package com.example.collegeapp.warden.login
+package com.example.collegeapp.common.login
 
 
 sealed class SignInState{

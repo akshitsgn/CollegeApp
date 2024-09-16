@@ -1,4 +1,5 @@
-package com.example.collegeapp.warden.profile
+package com.example.collegeapp.jointdirector.profile
+
 
 
 import androidx.compose.foundation.Image
@@ -22,12 +23,13 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
+import androidx.navigation.compose.rememberNavController
 import com.example.collegeapp.R
 import com.example.collegeapp.common.BottomBar
 import com.example.collegeapp.common.login.SignInViewModel
 
 @Composable
-fun ProfileScreen(navController: NavController) {
+fun ProfileScreenJD(navController: NavController) {
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -35,26 +37,26 @@ fun ProfileScreen(navController: NavController) {
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         // Top section with cover and profile image
-        TopSection()
+        TopSectionJD()
 
         Spacer(modifier = Modifier.height(16.dp))
 
         // Profile Name and ID
-        Text("Warden", fontWeight = FontWeight.Bold, fontSize = 24.sp)
+        Text("Admin", fontWeight = FontWeight.Bold, fontSize = 24.sp)
         Spacer(modifier = Modifier.height(8.dp))
-        Text("ID NUMBER: 524524525", fontWeight = FontWeight.Bold, color = Color.Black, fontSize = 12.sp)
+        Text("ID NUMBER: 52432534242", fontWeight = FontWeight.Bold, color = Color.Black, fontSize = 12.sp)
         Spacer(modifier = Modifier.height(24.dp))
         // Action Buttons
-        ProfileButtonSection(navController)
+        ProfileButtonSectionJD(navController)
         Spacer(modifier = Modifier.weight(1f))
         // Footer section with logo
-        FooterSection()
+        FooterSectionJD()
         BottomBar(navController = navController)
     }
 }
 
 @Composable
-fun TopSection() {
+fun TopSectionJD() {
     Box(
         modifier = Modifier
             .fillMaxWidth()
@@ -67,7 +69,7 @@ fun TopSection() {
     ) {
         // Profile image within the circle
         Image(
-            painter = painterResource(id = R.drawable.sajal) , // Placeholder for the profile image
+            painter = painterResource(id = R.drawable.jd),// Placeholder for the profile image
             contentDescription = "Profile Image",
             modifier = Modifier
 
@@ -75,34 +77,34 @@ fun TopSection() {
                 .clip(CircleShape)
                 .background(Color.White)
                 .border(4.dp, Color.White, CircleShape)
-                .clickable { /* Handle click for changing photo */ },
+                .clickable {  },
             contentScale = ContentScale.Crop
         )
     }
 }
 
 @Composable
-fun ProfileButtonSection(navController: NavController) {
+fun ProfileButtonSectionJD(navController: NavController) {
     val viewmodel: SignInViewModel = hiltViewModel()
     Column {
-        ProfileActionButton(iconId = R.drawable.erp, label = "ERP") {
+        ProfileActionButtonJD(iconId = R.drawable.erp, label = "ERP") {
             // Handle ERP click
         }
-        ProfileActionButton(iconId = R.drawable.edit, label = "Edit Profile") {
+        ProfileActionButtonJD(iconId = R.drawable.edit, label = "Edit Profile") {
             // Handle Edit Profile click
         }
-        ProfileActionButton(iconId = R.drawable.setting, label = "Settings") {
+        ProfileActionButtonJD(iconId = R.drawable.setting, label = "Settings") {
             // Handle Settings click
         }
-        ProfileActionButton(iconId = R.drawable.logout, label = "Logout", isDanger = true) {
-         viewmodel.signOut()
-navController.navigate("login")
+        ProfileActionButtonJD(iconId = R.drawable.logout, label = "Logout", isDanger = true) {
+            viewmodel.signOut()
+            navController.navigate("login")
         }
     }
 }
 
 @Composable
-fun ProfileActionButton(iconId: Int, label: String, isDanger: Boolean = false, onClick: () -> Unit) {
+fun ProfileActionButtonJD(iconId: Int, label: String, isDanger: Boolean = false, onClick: () -> Unit) {
     Button(
         onClick = onClick,
         colors = ButtonDefaults.buttonColors(
@@ -140,7 +142,7 @@ fun ProfileActionButton(iconId: Int, label: String, isDanger: Boolean = false, o
 
 
 @Composable
-fun FooterSection() {
+fun FooterSectionJD() {
     Image(
         painter = painterResource(id = R.drawable.aitbluelogo), // Placeholder for logo
         contentDescription = "Logo",
@@ -152,6 +154,7 @@ fun FooterSection() {
 
 @Preview(showBackground = true)
 @Composable
-fun PreviewProfileScreen() {
-    //ProfileScreen()
+fun PreviewProfileScreen1() {
+    val navController= rememberNavController()
+    ProfileScreenJD(navController)
 }

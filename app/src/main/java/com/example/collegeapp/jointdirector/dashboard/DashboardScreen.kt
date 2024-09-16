@@ -1,4 +1,5 @@
-package com.example.collegeapp.warden.dashboard
+package com.example.collegeapp.jointdirector.dashboard
+
 
 
 import android.util.Log
@@ -36,10 +37,8 @@ import com.example.collegeapp.common.BottomBar
 import com.example.collegeapp.warden.defaulter.HomeViewModel
 
 @Composable
-fun DashboardScreen(navController: NavController) {
-
-
-      Box(
+fun DashboardScreenJD(navController: NavController) {
+    Box(
         modifier = Modifier.fillMaxSize()
     ){
         Column(
@@ -51,24 +50,24 @@ fun DashboardScreen(navController: NavController) {
             val labels = listOf("Hostelers", "Students", "Visitors", "Others")
             val colors =
                 listOf(Color(0xFFFFA800), Color(0xFF38C555), Color(0xFF3478F7), Color(0xFFF64D4D))
-            HeaderSection()
+            HeaderSectionJD()
             Spacer(modifier = Modifier.height(16.dp))
-            StatCardsSection()
+            StatCardsSectionJD()
             Spacer(modifier = Modifier.height(24.dp))
-            DefaulterListButton(onClickAction = {
-                navController.navigate("defaulterlist")
+            DefaulterListButtonJD(onClickAction = {
+                navController.navigate("defaulterlistJD")
             })
             Spacer(modifier = Modifier.height(24.dp))
-            CircularChartSection() // This will now be properly centered
+            CircularChartSectionJD() // This will now be properly centered
             Spacer(modifier = Modifier.height(16.dp))
         }
-          BottomBar(navController = navController,
-              modifier = Modifier.align(Alignment.BottomCenter))
+        BottomBar(navController = navController,
+            modifier = Modifier.align(Alignment.BottomCenter))
     }
 }
 
 @Composable
-fun HeaderSection() {
+fun HeaderSectionJD() {
     Row(
         modifier = Modifier.fillMaxWidth(),
         horizontalArrangement = Arrangement.SpaceBetween,
@@ -83,7 +82,7 @@ fun HeaderSection() {
             )
         )
         Image(
-            painter = painterResource(id = R.drawable.sajal), // Placeholder, replace with actual image
+            painter = painterResource(id = R.drawable.jd), // Placeholder, replace with actual image
             contentDescription = "Profile",
             contentScale = ContentScale.Crop,
             modifier = Modifier
@@ -94,7 +93,7 @@ fun HeaderSection() {
 }
 
 @Composable
-fun StatCardsSection() {
+fun StatCardsSectionJD() {
     Row(
         modifier = Modifier.fillMaxWidth(),
         horizontalArrangement = Arrangement.SpaceEvenly
@@ -106,14 +105,14 @@ fun StatCardsSection() {
         val lateCount by homeViewModel.lateCount.collectAsState(initial = 0)
 
         val sum = hostelersCount + dayHostelersCount
-        StatCard(label = "Late Students", count = "${lateCount}", icon = R.drawable.lateimage)
+        StatCardJD(label = "Late Students", count = "${lateCount}", icon = R.drawable.lateimage)
         Spacer(modifier = Modifier.width(8.dp))
-        StatCard(label = "Hostlers", count = "${hostelersCount}", icon = R.drawable.hostelers)
+        StatCardJD(label = "Hostlers", count = "${hostelersCount}", icon = R.drawable.hostelers)
     }
 }
 
 @Composable
-fun StatCard(label: String, count: String, icon: Int) {
+fun StatCardJD(label: String, count: String, icon: Int) {
     Card(
         modifier = Modifier
             .width(150.dp)
@@ -139,7 +138,7 @@ fun StatCard(label: String, count: String, icon: Int) {
 }
 
 @Composable
-fun DefaulterListButton(onClickAction:()-> Unit) {
+fun DefaulterListButtonJD(onClickAction:()-> Unit) {
 
     Row(modifier = Modifier.fillMaxWidth()){
         Card(
@@ -181,7 +180,7 @@ fun DefaulterListButton(onClickAction:()-> Unit) {
 }
 
 @Composable
-fun CircularChartSection() {
+fun CircularChartSectionJD() {
     val colors = listOf(Color(0xFFFFA800), Color(0xFF38C555))
     val colors1 = listOf(Color(0xFF3478F7), Color(0xFFF64D4D))
     val labels = listOf("Hostelers", "Day-\nHostelers")
@@ -192,7 +191,7 @@ fun CircularChartSection() {
             .height(500.dp) // Allocate enough space for the chart
             .wrapContentSize(Alignment.Center) // Ensure everything is centered
     ) {
-   val homeViewModel:HomeViewModel= hiltViewModel()
+        val homeViewModel:HomeViewModel= hiltViewModel()
         val hostelersCount by homeViewModel.hostelersCount.collectAsState(initial = 0)
         val dayHostelersCount by homeViewModel.dayHostelersCount.collectAsState(initial = 0)
         val leaveCount by homeViewModel.leaveCount.collectAsState(initial = 0)
@@ -210,7 +209,7 @@ fun CircularChartSection() {
         } else {
             listOf(0f, 0f, 0f, 0f)  // No data case
         }
-    Log.d("list",proportions.toString())
+        Log.d("list",proportions.toString())
         Card(
             modifier = Modifier
                 .fillMaxSize()
@@ -225,16 +224,16 @@ fun CircularChartSection() {
                 horizontalAlignment = Alignment.CenterHorizontally,
                 verticalArrangement = Arrangement.Top
             ) {
-                CircularChart(modifier = Modifier.size(250.dp),proportions) // Adjust the chart size for responsiveness
+                CircularChartJD(modifier = Modifier.size(250.dp),proportions) // Adjust the chart size for responsiveness
                 Spacer(modifier = Modifier.height(24.dp)) // Space between chart and legend
                 // Legend below the chart
-                Legend(colors, labels1, colors1, labels)
+                LegendJD(colors, labels1, colors1, labels)
             }
         }
     }
 }
 @Composable
-fun CircularChart(modifier: Modifier = Modifier,proportions:List<Float>) {
+fun CircularChartJD(modifier: Modifier = Modifier,proportions:List<Float>) {
 
     val homeViewModel:HomeViewModel= hiltViewModel()
     val hostelersCount by homeViewModel.hostelersCount.collectAsState(initial = 0)
@@ -252,12 +251,12 @@ fun CircularChart(modifier: Modifier = Modifier,proportions:List<Float>) {
     ) {
         // Draw the circular chart segments using arcs
         val totalValue = 100f
-       // val proportions = listOf(25f, 55f, 15f, 5f) // Example percentages for each category
+        // val proportions = listOf(25f, 55f, 15f, 5f) // Example percentages for each category
         val colors = listOf(
-        Color(0xFFFFA800),  // Orange for Hostelers
-        Color(0xFF38C555),  // Green for Day Hostelers
-        Color(0xFF3478F7),  // Blue for On Leave
-        Color(0xFFF64D4D)
+            Color(0xFFFFA800),  // Orange for Hostelers
+            Color(0xFF38C555),  // Green for Day Hostelers
+            Color(0xFF3478F7),  // Blue for On Leave
+            Color(0xFFF64D4D)
         )
         var startAngle = -90f
 
@@ -308,7 +307,7 @@ fun CircularChart(modifier: Modifier = Modifier,proportions:List<Float>) {
 }
 
 @Composable
-fun Legend(colors: List<Color>, labels1: List<String>,colors1: List<Color>, labels: List<String>, modifier: Modifier = Modifier) {
+fun LegendJD(colors: List<Color>, labels1: List<String>,colors1: List<Color>, labels: List<String>, modifier: Modifier = Modifier) {
     Column(modifier = modifier.fillMaxSize()) {
         Row(
             modifier=Modifier.fillMaxWidth(),
@@ -357,5 +356,5 @@ fun Legend(colors: List<Color>, labels1: List<String>,colors1: List<Color>, labe
 @Composable
 fun DashboardPreview() {
     val navController = rememberNavController()
-    DashboardScreen(navController)
+    DashboardScreenJD(navController)
 }
