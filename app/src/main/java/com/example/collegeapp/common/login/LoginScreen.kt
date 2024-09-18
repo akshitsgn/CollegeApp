@@ -6,6 +6,7 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -76,6 +77,7 @@ fun LoginScreen(navController: NavController) {
         }
     }
 
+    var isLoading by remember { mutableStateOf(false) }
 
     var username by remember {
         mutableStateOf("")
@@ -120,12 +122,7 @@ fun LoginScreen(navController: NavController) {
     LaunchedEffect(key1 = uiState.value) {
         when(uiState.value){
             is SignInState.Success ->{
-                if(userRole=="Warden") {
-                    navController.navigate("dashboard")
-                }
-                else{
-                    navController.navigate("dashboardJD")
-                }
+                Toast.makeText(context,"Sign In Success",Toast.LENGTH_LONG).show()
             }
             is SignInState.Error ->{
                 Toast.makeText(context,"Sign In Failed",Toast.LENGTH_LONG).show()
@@ -136,161 +133,178 @@ fun LoginScreen(navController: NavController) {
         }
     }
 
-    Column(
-        modifier = Modifier
-            .verticalScroll(rememberScrollState())
-            .fillMaxSize()
-            .padding(top = 12.dp), // Padding around the edges
-        verticalArrangement = Arrangement.SpaceBetween // Distribute space between elements
-    ) {
+    LaunchedEffect(userRole) {
+        if (userRole!=null) {
+            isLoading = false
+            if (userRole == "Warden") {
+                navController.navigate("dashboard")
+            } else {
+                navController.navigate("dashboardJD")
+            }
+        }
+    }
 
-        Image(
-            painter = painterResource(id = R.drawable.aitlogo),
-            contentDescription = "Logo",
+    if (isLoading) {
+        Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+            CircularProgressIndicator()
+        }
+    }
+    else{
+        Column(
             modifier = Modifier
-                .align(Alignment.CenterHorizontally) // Center horizontally
-                .size(logoSize) // Responsive size
-        )
-        Spacer(modifier = Modifier.height(75.dp))
-        Image(
-            painter = painterResource(id = R.drawable.exit),
-            contentDescription = "Body Image",
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(bodyImageHeight)
-                .padding(vertical = 24.dp)
-                .aspectRatio(bodyImageAspectRatio)
-        )
-        Card(
-            modifier = Modifier
-                .offset(y = (-cardHeight / 5))
-                .width(cardWidth)
-                .align(Alignment.CenterHorizontally)
-                .shadow(42.dp, shape = RoundedCornerShape(18.dp))
-                .background(cardColor)
+                .verticalScroll(rememberScrollState())
+                .fillMaxSize()
+                .padding(top = 12.dp), // Padding around the edges
+            verticalArrangement = Arrangement.SpaceBetween // Distribute space between elements
         ) {
-            Column(
+
+            Image(
+                painter = painterResource(id = R.drawable.aitlogo),
+                contentDescription = "Logo",
+                modifier = Modifier
+                    .align(Alignment.CenterHorizontally) // Center horizontally
+                    .size(logoSize) // Responsive size
+            )
+            Spacer(modifier = Modifier.height(75.dp))
+            Image(
+                painter = painterResource(id = R.drawable.exit),
+                contentDescription = "Body Image",
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(16.dp)
+                    .height(bodyImageHeight)
+                    .padding(vertical = 24.dp)
+                    .aspectRatio(bodyImageAspectRatio)
+            )
+            Card(
+                modifier = Modifier
+                    .offset(y = (-cardHeight / 5))
+                    .width(cardWidth)
                     .align(Alignment.CenterHorizontally)
+                    .shadow(42.dp, shape = RoundedCornerShape(18.dp))
+                    .background(cardColor)
             ) {
-                Text(
-                    "LOGIN",
-                    style = TextStyle(
-                        fontFamily = FontFamily.Serif,
-                        fontSize = 20.sp,
-                        fontWeight = FontWeight.Bold,
-                        color = Color.Blue
-                    ),
+                Column(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .wrapContentWidth(Alignment.CenterHorizontally)
-                )
-                OutlinedTextField(
-                    value = username,
-                    onValueChange = {username=it},
-                    colors = androidx.compose.material3.TextFieldDefaults.colors(
-                        focusedTextColor = Color.Black,
-                        unfocusedIndicatorColor = Color(0xFF029135)
-                    ),
-                    label = {
-                        Text(
-                            "Username",
-                            style = TextStyle(
-                                fontWeight = FontWeight.Bold,
-                                fontSize = 17.sp
-                            )
-                        )
-                    },
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(bottom = 8.dp)
-                )
-                OutlinedTextField(
-                    value = password,
-                    onValueChange = {
-                        password = it
-                    },
-                    colors = androidx.compose.material3.TextFieldDefaults.colors(
-                        focusedTextColor = Color.Black,
-                        unfocusedIndicatorColor = Color(0xFF029135)
-                    ),
-                    visualTransformation = visualTransformation,
-                    trailingIcon = {
-                        val icon = if (passwordVisible) Icons.Filled.Lock else Icons.Filled.Lock
-                        Icon(
-                            imageVector = icon,
-                            contentDescription = if (passwordVisible) "Hide password" else "Show password",
-                            modifier = Modifier.clickable {
-                                setPasswordVisible(!passwordVisible)
-                            }
-                        )
-                    },
-                    label = {
-                        Text(
-                            "Password",
-                            style = TextStyle(
-                                fontWeight = FontWeight.Bold,
-                                fontSize = 17.sp
-                            )
-                        )
-                    },
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(bottom = 8.dp)
-                        .widthIn(min = 150.dp, max = 400.dp)
-                )
-                if(uiState.value== SignInState.Loading){
-                    CircularProgressIndicator(modifier = Modifier.align(Alignment.CenterHorizontally))
-                }
-                else{
-                    Button(
-                        onClick = {viewModel.signIn(username, password)},
-                        colors = ButtonDefaults.buttonColors(
-                            containerColor = Color(0xFF029135), // Background color of the button
-                            contentColor = Color.White // Text color of the button
+                        .padding(16.dp)
+                        .align(Alignment.CenterHorizontally)
+                ) {
+                    Text(
+                        "LOGIN",
+                        style = TextStyle(
+                            fontFamily = FontFamily.Serif,
+                            fontSize = 20.sp,
+                            fontWeight = FontWeight.Bold,
+                            color = Color.Blue
                         ),
-                        enabled = username.isNotEmpty() && password.isNotEmpty() && (uiState.value == SignInState.Nothing || uiState.value == SignInState.Error),
-                        shape = RoundedCornerShape(12.dp),
                         modifier = Modifier
-                            .width(140.dp)
-                            .align(Alignment.CenterHorizontally) // Center the button horizontally
-                        // Optional padding above the button
-                    ) {
-                        Text("Log In")
+                            .fillMaxWidth()
+                            .wrapContentWidth(Alignment.CenterHorizontally)
+                    )
+                    OutlinedTextField(
+                        value = username,
+                        onValueChange = { username = it },
+                        colors = androidx.compose.material3.TextFieldDefaults.colors(
+                            focusedTextColor = Color.Black,
+                            unfocusedIndicatorColor = Color(0xFF029135)
+                        ),
+                        label = {
+                            Text(
+                                "Username",
+                                style = TextStyle(
+                                    fontWeight = FontWeight.Bold,
+                                    fontSize = 17.sp
+                                )
+                            )
+                        },
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(bottom = 8.dp)
+                    )
+                    OutlinedTextField(
+                        value = password,
+                        onValueChange = {
+                            password = it
+                        },
+                        colors = androidx.compose.material3.TextFieldDefaults.colors(
+                            focusedTextColor = Color.Black,
+                            unfocusedIndicatorColor = Color(0xFF029135)
+                        ),
+                        visualTransformation = visualTransformation,
+                        trailingIcon = {
+                            val icon = if (passwordVisible) Icons.Filled.Lock else Icons.Filled.Lock
+                            Icon(
+                                imageVector = icon,
+                                contentDescription = if (passwordVisible) "Hide password" else "Show password",
+                                modifier = Modifier.clickable {
+                                    setPasswordVisible(!passwordVisible)
+                                }
+                            )
+                        },
+                        label = {
+                            Text(
+                                "Password",
+                                style = TextStyle(
+                                    fontWeight = FontWeight.Bold,
+                                    fontSize = 17.sp
+                                )
+                            )
+                        },
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(bottom = 8.dp)
+                            .widthIn(min = 150.dp, max = 400.dp)
+                    )
+                    if (uiState.value == SignInState.Loading) {
+                        CircularProgressIndicator(modifier = Modifier.align(Alignment.CenterHorizontally))
+                    } else {
+                        Button(
+                            onClick = { viewModel.signIn(username, password) },
+                            colors = ButtonDefaults.buttonColors(
+                                containerColor = Color(0xFF029135), // Background color of the button
+                                contentColor = Color.White // Text color of the button
+                            ),
+                            enabled = username.isNotEmpty() && password.isNotEmpty() && (uiState.value == SignInState.Nothing || uiState.value == SignInState.Error),
+                            shape = RoundedCornerShape(12.dp),
+                            modifier = Modifier
+                                .width(140.dp)
+                                .align(Alignment.CenterHorizontally) // Center the button horizontally
+                            // Optional padding above the button
+                        ) {
+                            Text("Log In")
+                        }
+                    }
+                    Text("Forgot Password?",
+                        style = TextStyle(
+                            fontSize = 14.sp
+                        ),
+
+                        color = Color(0xFF029135),
+                        modifier = Modifier
+                            .align(Alignment.CenterHorizontally)
+                            .clickable {
+
+                            })
+                    Spacer(modifier = Modifier.height(25.dp))
+                    Row(modifier = Modifier.align(Alignment.CenterHorizontally)) {
+                        Text(
+                            "Don't have an account? ",
+                            style = TextStyle(
+                                fontSize = 14.sp
+                            )
+                        )
+                        Text("Register",
+                            style = TextStyle(
+                                fontSize = 14.sp
+                            ),
+                            color = Color(0xFF029135),
+                            modifier = Modifier.clickable {
+                                navController.navigate("create")
+                            })
                     }
                 }
-                Text("Forgot Password?",
-                    style = TextStyle(
-                        fontSize = 14.sp
-                    ),
 
-                    color = Color(0xFF029135),
-                    modifier = Modifier
-                        .align(Alignment.CenterHorizontally)
-                        .clickable {
-
-                        })
-                Spacer(modifier = Modifier.height(25.dp))
-                Row(modifier = Modifier.align(Alignment.CenterHorizontally)) {
-                    Text(
-                        "Don't have an account? ",
-                        style = TextStyle(
-                            fontSize = 14.sp
-                        )
-                    )
-                    Text("Register",
-                        style = TextStyle(
-                            fontSize = 14.sp
-                        ),
-                        color = Color(0xFF029135),
-                        modifier = Modifier.clickable {
-                            navController.navigate("create")
-                        })
-                }
             }
-
         }
     }
 }

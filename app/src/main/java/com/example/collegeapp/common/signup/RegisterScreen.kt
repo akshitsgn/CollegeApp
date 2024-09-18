@@ -7,6 +7,7 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -78,6 +79,8 @@ fun CreateAccountScreen(navController: NavController) {
 
     val roles = listOf( "Admin", "Warden") // List of roles
 
+    var isLoading by remember { mutableStateOf(false) }
+
     val visualTransformation: VisualTransformation =
         if (passwordVisible) VisualTransformation.None else PasswordVisualTransformation()
     val visualTransformation1: VisualTransformation =
@@ -117,12 +120,7 @@ fun CreateAccountScreen(navController: NavController) {
     LaunchedEffect(key1 = uiState.value) {
         when (uiState.value) {
             is SignUpState.Success -> {
-                if(userRole=="Warden"){
-                navController.navigate("dashboard")
-                    }
-                else{
-                    navController.navigate("dashboardJD")
-                }
+                Toast.makeText(context, "Sign Up Success", Toast.LENGTH_LONG).show()
             }
             is SignUpState.Error -> {
                 Toast.makeText(context, "Sign Up Failed", Toast.LENGTH_LONG).show()
@@ -133,223 +131,248 @@ fun CreateAccountScreen(navController: NavController) {
         }
     }
 
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(top = 12.dp),
-        verticalArrangement = Arrangement.Top
-    ) {
-        // Logo
-        Image(
-            painter = painterResource(id = R.drawable.aitlogo),
-            contentDescription = "Logo",
+    LaunchedEffect(userRole) {
+        if (userRole!=null) {
+            isLoading = false
+            if (userRole == "Warden") {
+                navController.navigate("dashboard")
+            } else {
+                navController.navigate("dashboardJD")
+            }
+        }
+    }
+
+    if (isLoading) {
+        Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+            CircularProgressIndicator()
+        }
+    }
+
+else{
+        Column(
             modifier = Modifier
-                .align(Alignment.CenterHorizontally)
-                .size(logoSize)
-        )
-        Spacer(modifier = Modifier.height(40.dp))
-        Column(modifier = Modifier.verticalScroll(rememberScrollState())) {
+                .fillMaxSize()
+                .padding(top = 12.dp),
+            verticalArrangement = Arrangement.Top
+        ) {
+            // Logo
             Image(
-                painter = painterResource(id = R.drawable.exit),
-                contentDescription = "Body Image",
+                painter = painterResource(id = R.drawable.aitlogo),
+                contentDescription = "Logo",
                 modifier = Modifier
-                    .fillMaxWidth()
-                    .height(bodyImageHeight)
-                    .padding(vertical = 16.dp)
-                    .aspectRatio(bodyImageAspectRatio)
-            )
-
-            Spacer(modifier = Modifier.height(24.dp))
-
-            // Card containing the form
-            Card(
-                modifier = Modifier
-                    .offset(y = (-cardHeight / 3))
-                    .width(cardWidth)
                     .align(Alignment.CenterHorizontally)
-                    .shadow(8.dp, shape = RoundedCornerShape(18.dp))
-                    .background(cardColor),
-                shape = RoundedCornerShape(16.dp)
-            ) {
-                Column(
+                    .size(logoSize)
+            )
+            Spacer(modifier = Modifier.height(40.dp))
+            Column(modifier = Modifier.verticalScroll(rememberScrollState())) {
+                Image(
+                    painter = painterResource(id = R.drawable.exit),
+                    contentDescription = "Body Image",
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(16.dp)
+                        .height(bodyImageHeight)
+                        .padding(vertical = 16.dp)
+                        .aspectRatio(bodyImageAspectRatio)
+                )
+
+                Spacer(modifier = Modifier.height(24.dp))
+
+                // Card containing the form
+                Card(
+                    modifier = Modifier
+                        .offset(y = (-cardHeight / 3))
+                        .width(cardWidth)
+                        .align(Alignment.CenterHorizontally)
+                        .shadow(8.dp, shape = RoundedCornerShape(18.dp))
+                        .background(cardColor),
+                    shape = RoundedCornerShape(16.dp)
                 ) {
-                    // Register Text
-                    Text(
-                        "REGISTER",
-                        style = TextStyle(
-                            fontFamily = FontFamily.Serif,
-                            fontSize = 20.sp,
-                            fontWeight = FontWeight.Bold,
-                            color = Color.Blue
-                        ),
+                    Column(
                         modifier = Modifier
                             .fillMaxWidth()
-                            .wrapContentWidth(Alignment.CenterHorizontally)
-                    )
-
-                    Spacer(modifier = Modifier.height(16.dp))
-
-                    // E-Mail Field
-                    OutlinedTextField(
-                        value = username,
-                        onValueChange = { username = it },
-                        label = {
-                            Text(
-                                "E-Mail",
-                                style = TextStyle(
-                                    fontWeight = FontWeight.Bold,
-                                    fontSize = 17.sp
-                                )
-                            )
-                        },
-                        colors = androidx.compose.material3.TextFieldDefaults.colors(
-                            focusedIndicatorColor = Color(0xFF029135),
-                            unfocusedIndicatorColor = Color(0xFF029135)
-                        ),
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(bottom = 8.dp)
-                    )
-
-                    // Password Field
-                    OutlinedTextField(
-                        value = password,
-                        onValueChange = { password = it },
-                        isError = password.isNotEmpty() &&
-                                confirmPassword.isNotEmpty() && password != confirmPassword,
-                        visualTransformation = visualTransformation,
-                        trailingIcon = {
-                            val icon = if (passwordVisible) Icons.Filled.Lock else Icons.Filled.Lock
-                            Icon(
-                                imageVector = icon,
-                                contentDescription = if (passwordVisible) "Hide password" else "Show password",
-                                modifier = Modifier.clickable { passwordVisible = !passwordVisible }
-                            )
-                        },
-                        label = {
-                            Text(
-                                "Password",
-                                style = TextStyle(
-                                    fontWeight = FontWeight.Bold,
-                                    fontSize = 17.sp
-                                )
-                            )
-                        },
-                        colors = androidx.compose.material3.TextFieldDefaults.colors(
-                            focusedIndicatorColor = Color(0xFF029135),
-                            unfocusedIndicatorColor = Color(0xFF029135)
-                        ),
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(bottom = 8.dp)
-                    )
-
-                    // Confirm Password Field
-                    OutlinedTextField(
-                        value = confirmPassword,
-                        onValueChange = { confirmPassword = it },
-                        visualTransformation = visualTransformation1,
-                        trailingIcon = {
-                            val icon = if (passwordVisible1) Icons.Filled.Lock else Icons.Filled.Lock
-                            Icon(
-                                imageVector = icon,
-                                contentDescription = if (passwordVisible1) "Hide password" else "Show password",
-                                modifier = Modifier.clickable { passwordVisible1 = !passwordVisible1 }
-                            )
-                        },
-                        label = {
-                            Text(
-                                "Confirm Password",
-                                style = TextStyle(
-                                    fontWeight = FontWeight.Bold,
-                                    fontSize = 17.sp
-                                )
-                            )
-                        },
-                        colors = androidx.compose.material3.TextFieldDefaults.colors(
-                            focusedIndicatorColor = Color(0xFF029135),
-                            unfocusedIndicatorColor = Color(0xFF029135)
-                        ),
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(bottom = 8.dp)
-                    )
-
-                    Spacer(modifier = Modifier.height(16.dp))
-
-                    // User Role Selection
-                    Text(
-                        "Select Role:",
-                        style = TextStyle(fontWeight = FontWeight.Bold, fontSize = 17.sp)
-                    )
-                    Spacer(modifier = Modifier.height(8.dp))
-
-                    // Row for Radio Buttons for User Role
-                    Row(
-                        modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.SpaceEvenly
+                            .padding(16.dp)
                     ) {
-                        roles.forEach { role ->
-                            Row(
-                                verticalAlignment = Alignment.CenterVertically,
-                                modifier = Modifier
-                                    .clickable { selectedRole = role }
-                            ) {
-                                androidx.compose.material3.RadioButton(
-                                    selected = (selectedRole == role),
-                                    onClick = { selectedRole = role }
-                                )
-                                Text(
-                                    text = role,
-                                    style = TextStyle(fontSize = 16.sp),
-                                    modifier = Modifier.padding(start = 8.dp)
-                                )
-                            }
-                        }
-                    }
-
-                    Spacer(modifier = Modifier.height(16.dp))
-
-                    if (uiState.value == SignUpState.Loading) {
-                        CircularProgressIndicator(modifier = Modifier.align(Alignment.CenterHorizontally))
-                    } else {
-                        Button(
-                            onClick = { viewModel.signUp(username, password, selectedRole) },
-                            colors = ButtonDefaults.buttonColors(
-                                containerColor = Color(0xFF029135),
-                                contentColor = Color.White
+                        // Register Text
+                        Text(
+                            "REGISTER",
+                            style = TextStyle(
+                                fontFamily = FontFamily.Serif,
+                                fontSize = 20.sp,
+                                fontWeight = FontWeight.Bold,
+                                color = Color.Blue
                             ),
-                            enabled = username.isNotEmpty() && password.isNotEmpty() && confirmPassword.isNotEmpty() && password == confirmPassword && (selectedRole=="Admin" || selectedRole == "Warden"),
-                            shape = RoundedCornerShape(12.dp),
                             modifier = Modifier
-                                .width(140.dp)
-                                .align(Alignment.CenterHorizontally)
+                                .fillMaxWidth()
+                                .wrapContentWidth(Alignment.CenterHorizontally)
+                        )
+
+                        Spacer(modifier = Modifier.height(16.dp))
+
+                        // E-Mail Field
+                        OutlinedTextField(
+                            value = username,
+                            onValueChange = { username = it },
+                            label = {
+                                Text(
+                                    "E-Mail",
+                                    style = TextStyle(
+                                        fontWeight = FontWeight.Bold,
+                                        fontSize = 17.sp
+                                    )
+                                )
+                            },
+                            colors = androidx.compose.material3.TextFieldDefaults.colors(
+                                focusedIndicatorColor = Color(0xFF029135),
+                                unfocusedIndicatorColor = Color(0xFF029135)
+                            ),
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(bottom = 8.dp)
+                        )
+
+                        // Password Field
+                        OutlinedTextField(
+                            value = password,
+                            onValueChange = { password = it },
+                            isError = password.isNotEmpty() &&
+                                    confirmPassword.isNotEmpty() && password != confirmPassword,
+                            visualTransformation = visualTransformation,
+                            trailingIcon = {
+                                val icon =
+                                    if (passwordVisible) Icons.Filled.Lock else Icons.Filled.Lock
+                                Icon(
+                                    imageVector = icon,
+                                    contentDescription = if (passwordVisible) "Hide password" else "Show password",
+                                    modifier = Modifier.clickable {
+                                        passwordVisible = !passwordVisible
+                                    }
+                                )
+                            },
+                            label = {
+                                Text(
+                                    "Password",
+                                    style = TextStyle(
+                                        fontWeight = FontWeight.Bold,
+                                        fontSize = 17.sp
+                                    )
+                                )
+                            },
+                            colors = androidx.compose.material3.TextFieldDefaults.colors(
+                                focusedIndicatorColor = Color(0xFF029135),
+                                unfocusedIndicatorColor = Color(0xFF029135)
+                            ),
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(bottom = 8.dp)
+                        )
+
+                        // Confirm Password Field
+                        OutlinedTextField(
+                            value = confirmPassword,
+                            onValueChange = { confirmPassword = it },
+                            visualTransformation = visualTransformation1,
+                            trailingIcon = {
+                                val icon =
+                                    if (passwordVisible1) Icons.Filled.Lock else Icons.Filled.Lock
+                                Icon(
+                                    imageVector = icon,
+                                    contentDescription = if (passwordVisible1) "Hide password" else "Show password",
+                                    modifier = Modifier.clickable {
+                                        passwordVisible1 = !passwordVisible1
+                                    }
+                                )
+                            },
+                            label = {
+                                Text(
+                                    "Confirm Password",
+                                    style = TextStyle(
+                                        fontWeight = FontWeight.Bold,
+                                        fontSize = 17.sp
+                                    )
+                                )
+                            },
+                            colors = androidx.compose.material3.TextFieldDefaults.colors(
+                                focusedIndicatorColor = Color(0xFF029135),
+                                unfocusedIndicatorColor = Color(0xFF029135)
+                            ),
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(bottom = 8.dp)
+                        )
+
+                        Spacer(modifier = Modifier.height(16.dp))
+
+                        // User Role Selection
+                        Text(
+                            "Select Role:",
+                            style = TextStyle(fontWeight = FontWeight.Bold, fontSize = 17.sp)
+                        )
+                        Spacer(modifier = Modifier.height(8.dp))
+
+                        // Row for Radio Buttons for User Role
+                        Row(
+                            modifier = Modifier.fillMaxWidth(),
+                            horizontalArrangement = Arrangement.SpaceEvenly
                         ) {
-                            Text("Register")
-                        }
-                    }
-
-                    Spacer(modifier = Modifier.height(16.dp))
-
-                    // Login text
-                    Row(
-                        modifier = Modifier.align(Alignment.CenterHorizontally)
-                    ) {
-                        Text(
-                            "Already have an account? ",
-                            style = TextStyle(fontSize = 14.sp)
-                        )
-                        Text(
-                            "Login",
-                            style = TextStyle(fontSize = 14.sp),
-                            color = Color(0xFF029135),
-                            modifier = Modifier.clickable {
-                                navController.navigate("login")
+                            roles.forEach { role ->
+                                Row(
+                                    verticalAlignment = Alignment.CenterVertically,
+                                    modifier = Modifier
+                                        .clickable { selectedRole = role }
+                                ) {
+                                    androidx.compose.material3.RadioButton(
+                                        selected = (selectedRole == role),
+                                        onClick = { selectedRole = role }
+                                    )
+                                    Text(
+                                        text = role,
+                                        style = TextStyle(fontSize = 16.sp),
+                                        modifier = Modifier.padding(start = 8.dp)
+                                    )
+                                }
                             }
-                        )
+                        }
+
+                        Spacer(modifier = Modifier.height(16.dp))
+
+                        if (uiState.value == SignUpState.Loading) {
+                            CircularProgressIndicator(modifier = Modifier.align(Alignment.CenterHorizontally))
+                        } else {
+                            Button(
+                                onClick = { viewModel.signUp(username, password, selectedRole) },
+                                colors = ButtonDefaults.buttonColors(
+                                    containerColor = Color(0xFF029135),
+                                    contentColor = Color.White
+                                ),
+                                enabled = username.isNotEmpty() && password.isNotEmpty() && confirmPassword.isNotEmpty() && password == confirmPassword && (selectedRole == "Admin" || selectedRole == "Warden"),
+                                shape = RoundedCornerShape(12.dp),
+                                modifier = Modifier
+                                    .width(140.dp)
+                                    .align(Alignment.CenterHorizontally)
+                            ) {
+                                Text("Register")
+                            }
+                        }
+
+                        Spacer(modifier = Modifier.height(16.dp))
+
+                        // Login text
+                        Row(
+                            modifier = Modifier.align(Alignment.CenterHorizontally)
+                        ) {
+                            Text(
+                                "Already have an account? ",
+                                style = TextStyle(fontSize = 14.sp)
+                            )
+                            Text(
+                                "Login",
+                                style = TextStyle(fontSize = 14.sp),
+                                color = Color(0xFF029135),
+                                modifier = Modifier.clickable {
+                                    navController.navigate("login")
+                                }
+                            )
+                        }
                     }
                 }
             }

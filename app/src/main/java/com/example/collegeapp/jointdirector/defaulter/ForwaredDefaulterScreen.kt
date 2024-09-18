@@ -43,11 +43,14 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
+import androidx.navigation.compose.rememberNavController
 import com.example.collegeapp.R
+import com.example.collegeapp.common.BottomBar
 import com.example.collegeapp.common.model.Students
 import com.example.collegeapp.warden.defaulter.HomeViewModel
 import java.text.SimpleDateFormat
@@ -101,7 +104,7 @@ fun StudentListWithSearchJD(
     val currentDate = dateFormat.format(Date())
 
     Column(
-        modifier = Modifier.fillMaxSize()
+        modifier = Modifier.fillMaxSize().padding(top=26.dp)
     ) {
         // Row for Title and Date
         Row(
@@ -158,6 +161,7 @@ fun StudentListWithSearchJD(
 //        ) {
 //            Text(text = "Forward All", fontSize = 18.sp, fontWeight = FontWeight.Bold)
 //        }
+        BottomBar(navController = navController)
     }
 }
 
@@ -233,4 +237,10 @@ fun StudentListItemJD(
 
         }
     }
+}
+@Preview(showBackground = true)
+@Composable
+fun JD(){
+    val navController = rememberNavController()
+    StudentListWithSearchJD(navController = navController)
 }

@@ -2,6 +2,7 @@ package com.example.collegeapp.warden.defaulter
 
 
 
+import android.net.Uri
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import com.example.collegeapp.common.model.Students
@@ -11,6 +12,7 @@ import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.ValueEventListener
 import com.google.firebase.database.database
+import com.google.firebase.storage.FirebaseStorage
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -22,6 +24,8 @@ import javax.inject.Inject
 
 @HiltViewModel
 class HomeViewModel @Inject constructor(): ViewModel() {
+
+    private val firebaseStorage = FirebaseStorage.getInstance().reference
     private val firebaseDatabase = Firebase.database
     private val _users = MutableStateFlow<List<Students>>(emptyList())
     val users = _users.asStateFlow()
@@ -125,7 +129,21 @@ class HomeViewModel @Inject constructor(): ViewModel() {
         }
     }
 
-
+    fun uploadImage(uri: Uri, onSuccess: (String) -> Unit, onError: (String) -> Unit) {
+        val imageRef = firebaseStorage.child("student_images/${uri.lastPathSegment}")
+        imageRef.putFile(uri)
+            .addOnSuccessListener { taskSnapshot ->
+                // Get the download URL of the uploaded image
+                imageRef.downloadUrl.addOnSuccessListener { downloadUri ->
+                    onSuccess(downloadUri.toString()) // Return the image URL
+                }.addOnFailureListener {
+                    onError("Failed to retrieve image URL")
+                }
+            }
+            .addOnFailureListener {
+                onError("Failed to upload image: ${it.message}")
+            }
+    }
 
 
 

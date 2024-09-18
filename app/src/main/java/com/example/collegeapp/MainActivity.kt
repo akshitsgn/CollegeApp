@@ -27,10 +27,10 @@ class MainActivity : ComponentActivity() {
             CollegeAppTheme {
                 //StudentListWithSearchJD()
                 val navController = rememberNavController()
-               NavScreen()
+               //NavScreen()
                 //CreateAccountScreen( navController)
               // StudentListWithSearch()
-               // AddStudentScreen()
+                AddStudentScreen()
                 //DashboardScreen(navController = navController)
             }
         }

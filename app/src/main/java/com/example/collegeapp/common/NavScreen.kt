@@ -8,6 +8,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -28,24 +31,49 @@ import com.google.firebase.auth.FirebaseAuth
 
 @Composable
 fun NavScreen(){
-
+    val navController = rememberNavController()
     val viewModel: SignUpViewModel = hiltViewModel()
     val userRole by viewModel.userRole.collectAsState() // Observe the user role
     val currentUser = FirebaseAuth.getInstance().currentUser
-    LaunchedEffect(currentUser?.uid) {
-        currentUser?.uid?.let { uid ->
-            viewModel.fetchUserRole(uid) // Fetch user role for the logged-in user
+    LaunchedEffect(currentUser) {
+        if (currentUser == null) {
+            // If no user is logged in, navigate to the login screen
+            navController.navigate("login") {
+                popUpTo("login") { inclusive = true }
+            }
+        } else {
+            // Fetch the user role when the user is logged in
+            viewModel.fetchUserRole(currentUser.uid)
         }
     }
-    val navController = rememberNavController()
+    var isLoading by remember { mutableStateOf(true) }
+    var startDestination by remember { mutableStateOf("loading") }
 
+    LaunchedEffect(userRole) {
+        if (userRole != null) {
+            isLoading = false
+            startDestination = if (userRole == "Warden") {
+                "dashboard"
+            } else {
+                "dashboardJD"
+            }
+        }
+    }
 
-    NavHost(navController = navController, startDestination = "login" ) {
+    NavHost(navController = navController, startDestination = startDestination ) {
         composable("login"){
             LoginScreen(navController)
         }
         composable("loading") {
-            LoadingScreen() // Show a simple loading indicator
+            if (isLoading) {
+                LoadingScreen() // Show a simple loading indicator
+            } else {
+                LaunchedEffect(Unit) {
+                    navController.navigate(startDestination) {
+                        popUpTo("loading") { inclusive = true }
+                    }
+                }
+            }
         }
         composable("create"){
             CreateAccountScreen(navController)
@@ -71,12 +99,9 @@ fun NavScreen(){
         composable("bottombar"){
             BottomBar(navController = navController)
         }
-
     }
 }@Composable
 fun LoadingScreen() {
-    // Display a loading indicator or any other UI while the user role is being fetched
-    // You can style this to your liking (e.g., a spinner or a progress bar)
     Box(
         modifier = Modifier.fillMaxSize(),
         contentAlignment = Alignment.Center // Align the circular indicator to the center

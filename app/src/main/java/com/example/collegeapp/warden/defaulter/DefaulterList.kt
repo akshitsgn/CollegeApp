@@ -196,7 +196,7 @@ fun StudentListWithSearch(navController: NavController
         )
     }
     Column(
-        modifier = Modifier.fillMaxSize()
+        modifier = Modifier.fillMaxSize().padding(top=26.dp)
     ) {
         // Row for Title and Date
         Row(
