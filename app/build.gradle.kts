@@ -58,7 +58,7 @@ dependencies {
     implementation(libs.firebase.storage.ktx)
     kapt("com.google.dagger:hilt-compiler:2.48")
     implementation("androidx.hilt:hilt-navigation-compose:1.1.0")
-
+    implementation("io.coil-kt:coil-compose:2.0.0")
 
 
     implementation(libs.androidx.core.ktx)

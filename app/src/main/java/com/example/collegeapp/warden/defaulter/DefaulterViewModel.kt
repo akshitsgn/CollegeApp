@@ -8,11 +8,13 @@ import androidx.lifecycle.ViewModel
 import com.example.collegeapp.common.model.Students
 import com.google.android.gms.tasks.Tasks
 import com.google.firebase.Firebase
+import com.google.firebase.auth.auth
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.ValueEventListener
 import com.google.firebase.database.database
 import com.google.firebase.storage.FirebaseStorage
+import com.google.firebase.storage.storage
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -20,6 +22,7 @@ import kotlinx.coroutines.flow.map
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
+import java.util.UUID
 import javax.inject.Inject
 
 @HiltViewModel
@@ -73,7 +76,33 @@ class HomeViewModel @Inject constructor(): ViewModel() {
         })
     }
 
-    fun addStudent(student: Students, onSuccess: () -> Unit, onError: (String) -> Unit) {
+    fun uploadImageAndAddStudent(
+        imageUri: Uri?,
+        student: Students,
+        onSuccess: () -> Unit,
+        onError: (String) -> Unit
+    ) {
+        if (imageUri != null) {
+            val imageRef = firebaseStorage.child("images/${UUID.randomUUID()}.jpg")
+            imageRef.putFile(imageUri)
+                .addOnSuccessListener { taskSnapshot ->
+                    imageRef.downloadUrl.addOnSuccessListener { uri ->
+                        // Set the imageUrl with the Firebase Storage download URL
+                        val studentWithImage = student.copy(imageUrl = uri.toString())
+                        // Now add the student with the image URL to the database
+                        addStudent(studentWithImage, onSuccess, onError)
+                    }
+                }
+                .addOnFailureListener {
+                    onError(it.message ?: "Failed to upload image")
+                }
+        } else {
+            // No image was selected, proceed with adding the student without image URL
+            addStudent(student, onSuccess, onError)
+        }
+    }
+
+  private  fun addStudent(student: Students, onSuccess: () -> Unit, onError: (String) -> Unit) {
         val key = firebaseDatabase.getReference("students").push().key
         if (key == null) {
             onError("Failed to generate a key")
@@ -128,23 +157,4 @@ class HomeViewModel @Inject constructor(): ViewModel() {
             forwardAndDeleteStudent(student)
         }
     }
-
-    fun uploadImage(uri: Uri, onSuccess: (String) -> Unit, onError: (String) -> Unit) {
-        val imageRef = firebaseStorage.child("student_images/${uri.lastPathSegment}")
-        imageRef.putFile(uri)
-            .addOnSuccessListener { taskSnapshot ->
-                // Get the download URL of the uploaded image
-                imageRef.downloadUrl.addOnSuccessListener { downloadUri ->
-                    onSuccess(downloadUri.toString()) // Return the image URL
-                }.addOnFailureListener {
-                    onError("Failed to retrieve image URL")
-                }
-            }
-            .addOnFailureListener {
-                onError("Failed to upload image: ${it.message}")
-            }
-    }
-
-
-
 }

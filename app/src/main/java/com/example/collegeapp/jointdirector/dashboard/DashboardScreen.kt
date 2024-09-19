@@ -157,7 +157,7 @@ fun DefaulterListButtonJD(onClickAction:()-> Unit) {
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Text(
-                    text = "Defaulter's List",
+                    text = "Forwarded List",
                     fontSize = 18.sp, // Increase font size for better readability
                     fontWeight = FontWeight.Bold, // Bold text for emphasis
                     color = Color(0xFF333333) // Use a dark grey color

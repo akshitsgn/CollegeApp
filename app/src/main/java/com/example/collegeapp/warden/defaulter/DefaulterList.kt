@@ -24,6 +24,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
+import coil.compose.AsyncImage
 import com.example.collegeapp.R
 import com.example.collegeapp.common.BottomBar
 import com.example.collegeapp.common.model.Students
@@ -53,7 +54,6 @@ fun SearchBar(
         }
     )
 }
-
 @Composable
 fun StudentListWithSearch(navController: NavController
 ) {
@@ -196,7 +196,9 @@ fun StudentListWithSearch(navController: NavController
         )
     }
     Column(
-        modifier = Modifier.fillMaxSize().padding(top=26.dp)
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(top = 26.dp)
     ) {
         // Row for Title and Date
         Row(
@@ -266,7 +268,6 @@ fun StudentListWithSearch(navController: NavController
         BottomBar(navController = navController)
     }
 }
-
 @Composable
 fun StudentListItem(
     student: Students,
@@ -295,14 +296,26 @@ fun StudentListItem(
                 verticalAlignment = Alignment.CenterVertically,
                 modifier = Modifier.fillMaxWidth()
             ) {
-                Image(
-                    painter = painterResource(id = R.drawable.sajal), // Replace with actual image resource
-                    contentDescription = "Student Image",
-                    contentScale = ContentScale.Crop, // Ensures image fills the circle without distortion
-                    modifier = Modifier
-                        .size(60.dp)
-                        .clip(CircleShape) // Circular shape for the image
-                )
+                if(student.imageUrl==null) {
+                    Image(
+                        painter = painterResource(id = R.drawable.sajal), // Replace with actual image resource
+                        contentDescription = "Student Image",
+                        contentScale = ContentScale.Crop, // Ensures image fills the circle without distortion
+                        modifier = Modifier
+                            .size(60.dp)
+                            .clip(CircleShape) // Circular shape for the image
+                    )
+                }
+                else{
+                    AsyncImage(model = student.imageUrl,
+                        contentDescription = "",
+                        contentScale = ContentScale.Crop, // Ensures image fills the circle without distortion
+                        modifier = Modifier
+                            .size(60.dp)
+                            .clip(CircleShape)
+
+                    )
+                }
 
 
                 Spacer(modifier = Modifier.width(8.dp))
@@ -330,7 +343,6 @@ fun StudentListItem(
                     )
                 }
             }
-
             Divider(modifier = Modifier.padding(vertical = 8.dp))
 
             // Row for Hosteller/Day Scholar button
@@ -354,7 +366,6 @@ fun StudentListItem(
                 ) {
                     Text(text = if (student.hosteler) "Forward" else "Forward")
                 }
-
                 // Remove Button
                 Button(
                     onClick = {
@@ -379,19 +390,5 @@ fun StudentListItem(
 @Preview(showBackground = true)
 @Composable
 fun PreviewStudentListWithSearch() {
-    // Dummy data for students
-//    val students = listOf(
-//        Students(name = "Sajal Kumar Jana", regNumber = "230001", isHosteler = false, hostel = "A-Block", inTime = "10:00 PM"),
-//        Students(name = "Ravi Sharma", regNumber = "230002", isHosteler = true, hostel = "B-Block", inTime = "09:30 PM"),
-//        Students(name = "Anjali Singh", regNumber = "230003", isHosteler = false, hostel = "C-Block", inTime = "10:15 PM"),
-//        Students(name = "Rahul Mehta", regNumber = "230004", isHosteler = true, hostel = "D-Block", inTime = "08:45 PM"),
-//        Students(name = "Priya Agarwal", regNumber = "230005", isHosteler = false, hostel = "E-Block", inTime = "11:00 PM")
-//    )
 
-//    StudentListWithSearch(
-//        students = students,
-//        onClick = { /* Handle click */ },
-//        onRemove = { /* Handle remove */ },
-//        onForwardAll = { /* Handle forward all action */ }
-//    )
 }

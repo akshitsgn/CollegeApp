@@ -49,6 +49,7 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
+import coil.compose.AsyncImage
 import com.example.collegeapp.R
 import com.example.collegeapp.common.BottomBar
 import com.example.collegeapp.common.model.Students
@@ -104,7 +105,9 @@ fun StudentListWithSearchJD(
     val currentDate = dateFormat.format(Date())
 
     Column(
-        modifier = Modifier.fillMaxSize().padding(top=26.dp)
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(top = 26.dp)
     ) {
         // Row for Title and Date
         Row(
@@ -145,22 +148,6 @@ fun StudentListWithSearchJD(
            }
         }
 
-        // Forward All button at the bottom
-//        Button(
-//            onClick = {
-//                // Show a toast when clicked
-//            },
-//            colors = ButtonDefaults.buttonColors(
-//                containerColor = Color(0xFF029135), // Custom green color
-//                contentColor = Color.White
-//            ),
-//            modifier = Modifier
-//                .fillMaxWidth()
-//                .padding(16.dp),
-//            shape = RoundedCornerShape(16.dp)
-//        ) {
-//            Text(text = "Forward All", fontSize = 18.sp, fontWeight = FontWeight.Bold)
-//        }
         BottomBar(navController = navController)
     }
 }
@@ -191,14 +178,25 @@ fun StudentListItemJD(
                 verticalAlignment = Alignment.CenterVertically,
                 modifier = Modifier.fillMaxWidth()
             ) {
-                Image(
-                    painter = painterResource(id = R.drawable.sajal), // Replace with actual image resource
-                    contentDescription = "Student Image",
-                    contentScale = ContentScale.Crop, // Ensures image fills the circle without distortion
-                    modifier = Modifier
-                        .size(60.dp)
-                        .clip(CircleShape) // Circular shape for the image
-                )
+                if(student.imageUrl==null) {
+                    Image(
+                        painter = painterResource(id = R.drawable.sajal), // Replace with actual image resource
+                        contentDescription = "Student Image",
+                        contentScale = ContentScale.Crop, // Ensures image fills the circle without distortion
+                        modifier = Modifier
+                            .size(60.dp)
+                            .clip(CircleShape) // Circular shape for the image
+                    )
+                }
+                else{
+                    AsyncImage(model = student.imageUrl,
+                        contentDescription = "",
+                        contentScale = ContentScale.Crop, // Ensures image fills the circle without distortion
+                        modifier = Modifier
+                            .size(60.dp)
+                            .clip(CircleShape)
+                    )
+                }
 
 
                 Spacer(modifier = Modifier.width(8.dp))

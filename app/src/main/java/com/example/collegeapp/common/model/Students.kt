@@ -13,7 +13,8 @@ data class Students(
     val hosteler: Boolean=false,
     val hostel : String="",
     val inTime: String="",
-    val date: String = getCurrentDate()
+    val date: String = getCurrentDate(),
+    val imageUrl: String?=""
 ){
     companion object {
         fun getCurrentDate(): String {
