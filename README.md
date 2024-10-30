@@ -33,7 +33,7 @@ Take Action: The Admin can take appropriate disciplinary actions based on the se
 
 Flow:
 1) A student arrives late and the app registers their details, including a live photo, in the system.
-2) 
+2) The guard note down the name and relevant details of the students which appeared on the warden dashboard.
 3) The Warden either:
 Resolves the issue and removes the student from the list, or
 Forwards the student's details to the Admin for further action.
