@@ -1,40 +1,69 @@
+# 🏫 College Defaulter Management App
 
-The college app is designed to streamline the management of student in and out  by incorporating multiple user roles, including Admin and Warden. 
+## 🔍 Project Overview  
+This **College App** is designed to simplify and automate the **in-and-out tracking** of hostel students using a structured, multi-role system. Built with **Jetpack Compose** and **Firebase**, it ensures real-time record-keeping, accountability, and communication between guards, wardens, and administrators. The app helps improve hostel discipline and enhances operational transparency.
 
-Here’s how it works:
+## 📱 App Screenshots
 
-Key Features:
+<p align="center">
+  <img src="https://github.com/akshitsgn/CollegeApp/blob/main/a53d5a34-1b65-4313-9f4d-608a05a0170f.jpg" alt="Warden Dashboard" width="300"/>
+  <img src="https://github.com/akshitsgn/CollegeApp/blob/main/67b6a070-5fc5-43bc-98fe-c1a497e320c2.jpg" width="300"/>
+</p>
 
-1) User Roles:
-Admin: The highest authority, responsible for making final decisions on defaulters.
-Warden: A middle layer, responsible for monitoring and managing hostel-related issues and forwarding serious cases to the admin.
+## ✨ Key Features
 
-2) Defaulter Management:
-Adding Defaulters: We can add a student to the defaulter list when they arrive late to the hostel after the intime. For each defaulter, it records:
-* A live photo of the student
-* The student’s registration number
-* Hostel name
-* Student’s name
-* Date and time of the incident
-The defaulter's information is stored in a database for further review.
+### 👥 Multi-User Role System
+- **Admin**: Final authority; reviews escalated cases and takes disciplinary action.
+- **Warden**: Intermediate authority; monitors hostel late entries and forwards severe cases.
+- **Guard** (or Automated Entry): Logs late arrivals with details and image capture.
 
-3) Warden's Dashboard:
-The Warden can view the list of defaulter students along with their details.
-Actions for the Warden:
-Forward to Admin: If the student’s case needs higher authority review, the Warden can forward the student’s details to the Admin.
-Remove from Defaulter List: If the Warden feels the situation is resolved, they can remove the student’s name from the defaulter list.
+### 🚨 Defaulter Management
+- **Auto Entry Logging**: When a student enters after hostel in-time, their details are captured:
+  - 📸 Live photo using device camera  
+  - 🆔 Registration number  
+  - 🏠 Hostel name  
+  - 👤 Student name  
+  - 🕓 Date and time
+- Stored in Firebase for real-time access and review.
 
-4)Admin's Dashboard:
-The Admin receives a list in the admin dashbaord when the Warden forwards a defaulter’s details.
-The Admin can view the forwarded defaulters along with the associated details (photo, registration number, etc.).
-Admin’s Actions:
-Remove the student after the action: The Admin can mark the case as addressed, indicating no further action is required.
-Take Action: The Admin can take appropriate disciplinary actions based on the severity of the situation.
+### 🛡️ Warden Dashboard
+- **Defaulter List View**: Review all students who violated in-time rules.
+- **Actions**:
+  - ✅ **Resolve Locally**: Remove defaulter if issue is justified.
+  - 📤 **Forward to Admin**: Escalate critical cases.
 
-Flow:
-1) A student arrives late and the app registers their details, including a live photo, in the system.
-2) The guard note down the name and relevant details of the students which appeared on the warden dashboard.
-3) The Warden either:
-Resolves the issue and removes the student from the list, or
-Forwards the student's details to the Admin for further action.
-The Admin reviews the forwarded list and decides on disciplinary measures or closes the case.
+### 🏛️ Admin Dashboard
+- **Received Forwarded Cases**: View defaulters escalated by wardens.
+- **Actions**:
+  - ❌ **Mark as Resolved**: Close the case if no action needed.
+  - ⚠️ **Take Disciplinary Action**: Proceed with appropriate steps based on incident severity.
+
+## 🔁 Workflow
+
+1. A student enters the hostel late.
+2. The app captures their details and photo and logs them in the system.
+3. The entry appears in the **Warden Dashboard**.
+4. The **Warden** either:
+   - Resolves it locally, or  
+   - Forwards it to the **Admin**.
+5. The **Admin** reviews and decides to close the case or take action.
+
+## 📚 Technologies Used
+
+- **Jetpack Compose** – UI toolkit for declarative design
+- **Firebase (Realtime DB + Storage)** – backend and data sync
+- **MVVM Architecture** – structured, scalable code
+- **CameraX API** – live photo capture
+- **Kotlin** – core development language
+
+## 💼 Use Cases
+
+- 🏠 **Hostel Management**: Track late arrivals with full transparency.
+- 🧑‍🏫 **Warden Operations**: Provide structured decisions on minor offenses.
+- 🧑‍💼 **Admin Oversight**: Receive only serious violations for final review and action.
+
+## 🛠️ How to Run
+
+1. Clone the repository:
+```bash
+git clone https://github.com/your-username/CollegeDefaulterApp
